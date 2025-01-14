@@ -74,7 +74,7 @@ describe('Feature: Organize webinars', () => {
 
     it('should throw an error', async () => {
       await expect(useCase.execute(payload)).rejects.toThrow(
-          'Webinar must be scheduled at least 3 days in advance',
+        'Webinar must be scheduled at least 3 days in advance',
       );
     });
 
@@ -98,7 +98,7 @@ describe('Feature: Organize webinars', () => {
 
     it('should throw an error', async () => {
       await expect(useCase.execute(payload)).rejects.toThrow(
-          'Webinar must have at most 1000 seats',
+        'Webinar must have at most 1000 seats',
       );
     });
 
@@ -122,7 +122,7 @@ describe('Feature: Organize webinars', () => {
 
     it('should throw an error', async () => {
       await expect(useCase.execute(payload)).rejects.toThrow(
-          'Webinar must have at least 1 seat',
+        'Webinar must have at least 1 seat',
       );
     });
 

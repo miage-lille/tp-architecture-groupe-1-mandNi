@@ -11,7 +11,6 @@ type WebinarProps = {
 };
 
 export class Webinar extends Entity<WebinarProps> {
-
   get id(): string {
     return this.props.id;
   }

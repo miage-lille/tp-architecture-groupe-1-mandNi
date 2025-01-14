@@ -6,7 +6,6 @@ type UserProps = {
   password: string;
 };
 export class User extends Entity<UserProps> {
-
   get id(): string {
     return this.props.id;
   }
