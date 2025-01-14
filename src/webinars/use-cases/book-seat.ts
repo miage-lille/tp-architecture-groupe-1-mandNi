@@ -4,6 +4,10 @@ import { User } from 'src/users/entities/user.entity';
 import { IUserRepository } from 'src/users/ports/user-repository.interface';
 import { IParticipationRepository } from 'src/webinars/ports/participation-repository.interface';
 import { IWebinarRepository } from 'src/webinars/ports/webinar-repository.interface';
+import {WebinarNotFound} from "../exceptions/webinar-not-found";
+import {WebinarNotEnoughSeatsException} from "../exceptions/webinar-not-enough-seats";
+import {WebinarAlreadyParticipatingException} from "../exceptions/webinar-already-participating";
+import {Participation} from "../entities/participation.entity";
 
 type Request = {
   webinarId: string;
@@ -12,13 +16,37 @@ type Request = {
 type Response = void;
 
 export class BookSeat implements Executable<Request, Response> {
-  constructor(
-    private readonly participationRepository: IParticipationRepository,
-    private readonly userRepository: IUserRepository,
-    private readonly webinarRepository: IWebinarRepository,
-    private readonly mailer: IMailer,
-  ) {}
-  async execute({ webinarId, user }: Request): Promise<Response> {
-    return;
-  }
+    constructor(
+        private readonly participationRepository: IParticipationRepository,
+        private readonly userRepository: IUserRepository,
+        private readonly webinarRepository: IWebinarRepository,
+        private readonly mailer: IMailer,
+    ) {
+    }
+
+    async execute({webinarId, user}: Request): Promise<Response> {
+
+        const webinar = await this.webinarRepository.findById(webinarId);
+        if (!webinar) {
+            throw new WebinarNotFound();
+        }
+        const participations =
+            await this.participationRepository.findByWebinarId(webinarId);
+        if (webinar.props.seats - participations.length <= 0) {
+            throw new WebinarNotEnoughSeatsException();
+        }
+        const userAlreadyParticipating =
+            await this.participationRepository.findByWebinarAndUser(webinarId, user.id);
+        if (userAlreadyParticipating) {
+            throw new WebinarAlreadyParticipatingException();
+        }
+        const newParticipation = new Participation({userId: user.id, webinarId});
+        await this.participationRepository.save(newParticipation).then(() => {
+            this.mailer.send({
+                to: user.props.email,
+                subject: 'You have successfully booked a seat!',
+                body: `You have successfully booked a seat for the webinar ${webinar.props.title}`,
+            });
+        });
+    }
 }

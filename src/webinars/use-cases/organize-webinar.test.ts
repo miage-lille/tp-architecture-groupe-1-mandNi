@@ -3,11 +3,13 @@ import { FixedIdGenerator } from 'src/core/adapters/fixed-id-generator';
 import { IDateGenerator } from 'src/core/ports/date-generator.interface';
 import { IIdGenerator } from 'src/core/ports/id-generator.interface';
 import { InMemoryWebinarRepository } from 'src/webinars/adapters/webinar-repository.in-memory';
+import { InMemoryParticipationRepository } from 'src/webinars/adapters/participation-repository.in-memory';
 import { Webinar } from 'src/webinars/entities/webinar.entity';
 import { OrganizeWebinars } from 'src/webinars/use-cases/organize-webinar';
 
 describe('Feature: Organize webinars', () => {
   let repository: InMemoryWebinarRepository;
+  let participationRepository: InMemoryParticipationRepository;
   let idGenerator: IIdGenerator;
   let useCase: OrganizeWebinars;
   let dateGenerator: IDateGenerator;
@@ -74,14 +76,16 @@ describe('Feature: Organize webinars', () => {
 
     it('should throw an error', async () => {
       await expect(useCase.execute(payload)).rejects.toThrow(
-        'Webinar must be scheduled at least 3 days in advance',
+          'Webinar must be scheduled at least 3 days in advance',
       );
     });
 
     it('should not insert the webinar in the repository', async () => {
       try {
         await useCase.execute(payload);
-      } catch (error) {}
+      } catch (error) {
+
+      }
 
       expect(repository.database).toEqual([]);
     });
@@ -98,14 +102,16 @@ describe('Feature: Organize webinars', () => {
 
     it('should throw an error', async () => {
       await expect(useCase.execute(payload)).rejects.toThrow(
-        'Webinar must have at most 1000 seats',
+          'Webinar must have at most 1000 seats',
       );
     });
 
     it('should not insert the webinar in the repository', async () => {
       try {
         await useCase.execute(payload);
-      } catch (error) {}
+      } catch (error) {
+
+      }
 
       expect(repository.database).toEqual([]);
     });
@@ -122,7 +128,7 @@ describe('Feature: Organize webinars', () => {
 
     it('should throw an error', async () => {
       await expect(useCase.execute(payload)).rejects.toThrow(
-        'Webinar must have at least 1 seat',
+          'Webinar must have at least 1 seat',
       );
     });
 
