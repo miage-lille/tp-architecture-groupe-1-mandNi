@@ -47,9 +47,9 @@ describe('Feature: Book a seat', () => {
       });
 
       expect(mailer.send).toHaveBeenCalledWith({
-        to: 'alice@example.com',
-        subject: 'You have successfully booked a seat!',
-        body: 'You have successfully booked a seat for the webinar Webinar Title',
+        to: 'user-organizer-id',
+        subject: 'New participant registered',
+        body: 'A new participant (user-alice-id) has booked a seat for your webinar (webinar-1)'
       });
     });
   });
