@@ -8,8 +8,6 @@ export class InMemoryWebinarRepository implements IWebinarRepository {
   }
 
   findById(id: string): Promise<Webinar | null> {
-    return Promise.resolve(
-      this.database.find((webinar) => webinar.id === id) || null,
-    );
+    return Promise.resolve(this.database.find((webinar) => webinar.id === id) || null);
   }
 }

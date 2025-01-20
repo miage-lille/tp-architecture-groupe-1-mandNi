@@ -1,30 +1,19 @@
 import { IParticipationRepository } from '../ports/participation-repository.interface';
 import { Participation } from '../entities/participation.entity';
 
-export class InMemoryParticipationRepository
-  implements IParticipationRepository
-{
+export class InMemoryParticipationRepository implements IParticipationRepository {
   constructor(public database: Participation[] = []) {}
 
-  findByWebinarAndUser(
-    webinarId: string,
-    userId: string,
-  ): Promise<Participation | null> {
+  findByWebinarAndUser(webinarId: string, userId: string): Promise<Participation | null> {
     return Promise.resolve(
       this.database.find(
-        (participation) =>
-          participation.props.webinarId === webinarId &&
-          participation.props.userId === userId,
+        (participation) => participation.props.webinarId === webinarId && participation.props.userId === userId,
       ) || null,
     );
   }
 
   findByWebinarId(webinarId: string): Promise<Participation[]> {
-    return Promise.resolve(
-      this.database.filter(
-        (participation) => participation.props.webinarId === webinarId,
-      ),
-    );
+    return Promise.resolve(this.database.filter((participation) => participation.props.webinarId === webinarId));
   }
 
   save(participation: Participation): Promise<void> {

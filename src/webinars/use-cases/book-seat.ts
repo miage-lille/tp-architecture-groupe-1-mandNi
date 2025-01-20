@@ -26,26 +26,21 @@ export class BookSeat implements Executable<Request, Response> {
     if (!webinar) {
       throw new WebinarNotFound();
     }
-    const participations =
-      await this.participationRepository.findByWebinarId(webinarId);
-    const notEnoughSeats = webinar.props.seats - participations.length <= 0;
+    const participation = await this.participationRepository.findByWebinarId(webinarId);
+    const notEnoughSeats = webinar.props.seats - participation.length <= 0;
     if (notEnoughSeats) {
       throw new WebinarNotEnoughSeatsException();
     }
-    const userAlreadyParticipating =
-      await this.participationRepository.findByWebinarAndUser(
-        webinarId,
-        user.id,
-      );
+    const userAlreadyParticipating = await this.participationRepository.findByWebinarAndUser(webinarId, user.id);
     if (userAlreadyParticipating) {
       throw new WebinarAlreadyParticipatingException();
     }
     const newParticipation = new Participation({ userId: user.id, webinarId });
     await this.participationRepository.save(newParticipation).then(() => {
       this.mailer.send({
-        to: user.props.email,
-        subject: 'You have successfully booked a seat!',
-        body: `You have successfully booked a seat for the webinar ${webinar.props.title}`,
+        to: webinar.props.organizerId,
+        subject: 'New participant registered',
+        body: `A new participant (${user.id}) has booked a seat for your webinar (${webinarId})`,
       });
     });
   }
